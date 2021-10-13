@@ -1,0 +1,6 @@
+framework module Pods_CarrotSampleTests {
+  umbrella header "Pods-CarrotSampleTests-umbrella.h"
+
+  export *
+  module * { export * }
+}
