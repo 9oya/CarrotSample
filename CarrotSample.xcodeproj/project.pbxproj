@@ -23,8 +23,14 @@
 		BF7940442716649400E99551 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7940432716649400E99551 /* DetailViewModel.swift */; };
 		BF794046271664C200E99551 /* AppDependency.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF794045271664C200E99551 /* AppDependency.swift */; };
 		BFD95B9527184C660058BE79 /* BookModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95B9427184C660058BE79 /* BookModel.swift */; };
-		BFD95B9727184D180058BE79 /* SessionManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95B9627184D180058BE79 /* SessionManagerProtocol.swift */; };
+		BFD95B9727184D180058BE79 /* SessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95B9627184D180058BE79 /* SessionProtocol.swift */; };
 		BFD95B9927184E420058BE79 /* BookService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95B9827184E420058BE79 /* BookService.swift */; };
+		BFD95B9B2718E1CA0058BE79 /* MemoryCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95B9A2718E1CA0058BE79 /* MemoryCacheService.swift */; };
+		BFD95BA02718E8440058BE79 /* MockNSCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95B9F2718E8440058BE79 /* MockNSCache.swift */; };
+		BFD95BA22718E86A0058BE79 /* MockSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95BA12718E86A0058BE79 /* MockSession.swift */; };
+		BFD95BA42718EB110058BE79 /* DiskCacheService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95BA32718EB110058BE79 /* DiskCacheService.swift */; };
+		BFD95BA62718F1A50058BE79 /* FileManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95BA52718F1A50058BE79 /* FileManagerProtocol.swift */; };
+		BFD95BA82718F2360058BE79 /* MockFileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFD95BA72718F2360058BE79 /* MockFileManager.swift */; };
 		D942BEBE0795DD4004311BB2 /* Pods_CarrotSample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EE298D365F84969A16F392C3 /* Pods_CarrotSample.framework */; };
 /* End PBXBuildFile section */
 
@@ -71,8 +77,14 @@
 		BF7940432716649400E99551 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
 		BF794045271664C200E99551 /* AppDependency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDependency.swift; sourceTree = "<group>"; };
 		BFD95B9427184C660058BE79 /* BookModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookModel.swift; sourceTree = "<group>"; };
-		BFD95B9627184D180058BE79 /* SessionManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManagerProtocol.swift; sourceTree = "<group>"; };
+		BFD95B9627184D180058BE79 /* SessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionProtocol.swift; sourceTree = "<group>"; };
 		BFD95B9827184E420058BE79 /* BookService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookService.swift; sourceTree = "<group>"; };
+		BFD95B9A2718E1CA0058BE79 /* MemoryCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoryCacheService.swift; sourceTree = "<group>"; };
+		BFD95B9F2718E8440058BE79 /* MockNSCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockNSCache.swift; sourceTree = "<group>"; };
+		BFD95BA12718E86A0058BE79 /* MockSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSession.swift; sourceTree = "<group>"; };
+		BFD95BA32718EB110058BE79 /* DiskCacheService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiskCacheService.swift; sourceTree = "<group>"; };
+		BFD95BA52718F1A50058BE79 /* FileManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileManagerProtocol.swift; sourceTree = "<group>"; };
+		BFD95BA72718F2360058BE79 /* MockFileManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockFileManager.swift; sourceTree = "<group>"; };
 		E6FF674CB4FFE65244298774 /* Pods-CarrotSampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarrotSampleTests.release.xcconfig"; path = "Target Support Files/Pods-CarrotSampleTests/Pods-CarrotSampleTests.release.xcconfig"; sourceTree = "<group>"; };
 		EE298D365F84969A16F392C3 /* Pods_CarrotSample.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CarrotSample.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -160,6 +172,7 @@
 		BF79401927165FDC00E99551 /* CarrotSampleTests */ = {
 			isa = PBXGroup;
 			children = (
+				BFD95B9E2718E8260058BE79 /* Mocks */,
 				BF79401A27165FDC00E99551 /* CarrotSampleTests.swift */,
 			);
 			path = CarrotSampleTests;
@@ -213,6 +226,8 @@
 			isa = PBXGroup;
 			children = (
 				BFD95B9827184E420058BE79 /* BookService.swift */,
+				BFD95B9A2718E1CA0058BE79 /* MemoryCacheService.swift */,
+				BFD95BA32718EB110058BE79 /* DiskCacheService.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -227,7 +242,8 @@
 		BF7940392716640800E99551 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				BFD95B9627184D180058BE79 /* SessionManagerProtocol.swift */,
+				BFD95B9627184D180058BE79 /* SessionProtocol.swift */,
+				BFD95BA52718F1A50058BE79 /* FileManagerProtocol.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -256,6 +272,16 @@
 				BF7940432716649400E99551 /* DetailViewModel.swift */,
 			);
 			path = Detail;
+			sourceTree = "<group>";
+		};
+		BFD95B9E2718E8260058BE79 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				BFD95B9F2718E8440058BE79 /* MockNSCache.swift */,
+				BFD95BA12718E86A0058BE79 /* MockSession.swift */,
+				BFD95BA72718F2360058BE79 /* MockFileManager.swift */,
+			);
+			path = Mocks;
 			sourceTree = "<group>";
 		};
 		C0CA46EABE4AB996D3665557 /* Frameworks */ = {
@@ -506,11 +532,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BFD95B9727184D180058BE79 /* SessionManagerProtocol.swift in Sources */,
+				BFD95BA42718EB110058BE79 /* DiskCacheService.swift in Sources */,
+				BFD95B9727184D180058BE79 /* SessionProtocol.swift in Sources */,
 				BF79400827165FDA00E99551 /* ViewController.swift in Sources */,
 				BF7940402716648600E99551 /* SearchViewModel.swift in Sources */,
 				BF7940442716649400E99551 /* DetailViewModel.swift in Sources */,
+				BFD95BA62718F1A50058BE79 /* FileManagerProtocol.swift in Sources */,
 				BFD95B9527184C660058BE79 /* BookModel.swift in Sources */,
+				BFD95B9B2718E1CA0058BE79 /* MemoryCacheService.swift in Sources */,
 				BF79400427165FDA00E99551 /* AppDelegate.swift in Sources */,
 				BF7940422716648E00E99551 /* DetailViewController.swift in Sources */,
 				BF79403E2716647E00E99551 /* SearchViewController.swift in Sources */,
@@ -524,7 +553,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BFD95BA22718E86A0058BE79 /* MockSession.swift in Sources */,
+				BFD95BA82718F2360058BE79 /* MockFileManager.swift in Sources */,
 				BF79401B27165FDC00E99551 /* CarrotSampleTests.swift in Sources */,
+				BFD95BA02718E8440058BE79 /* MockNSCache.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -40,7 +40,7 @@ import Foundation
 //    ]
 //}
 
-struct SearchBookModel: Codable {
+struct BookSearchResult: Codable {
     let total: String
     let page: String
     let books: [BookModel]?

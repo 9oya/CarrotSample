@@ -29,8 +29,6 @@ enum Router: URLRequestConvertible
         }
     }
 
-    // MARK: URLRequestConvertible
-
     func asURLRequest() throws -> URLRequest
     {
         let url = try Router.baseURLString.asURL()
@@ -38,12 +36,18 @@ enum Router: URLRequestConvertible
         var urlRequest = URLRequest(url: url.appendingPathComponent(path))
         urlRequest.httpMethod = method.rawValue
 
-
         return urlRequest
     }
 }
 
-final class BookService {
+protocol BookServiceProtocol {
+    func search(keywork: String,
+                page: Int,
+                completionHandler: @escaping (BookSearchResult) -> Void)
+    -> DataRequest
+}
+
+final class BookService: BookServiceProtocol {
     
     private let session: SessionProtocol
     
@@ -54,14 +58,15 @@ final class BookService {
     @discardableResult
     func search(keywork: String,
                 page: Int,
-                completionHandler: @escaping (SearchBookModel) -> Void)
+                completionHandler: @escaping (BookSearchResult) -> Void)
     -> DataRequest {
         let request = Router.searchBooks(keyword: keywork, page: page)
         return session
             .request(request, interceptor: nil)
             .responseData { response in
                 let decoder = JSONDecoder()
-                if let result = try? decoder.decode(SearchBookModel.self, from: response.value!) {
+                if let data = response.value,
+                   let result = try? decoder.decode(BookSearchResult.self, from: data) {
                     completionHandler(result)
                 }
             }
