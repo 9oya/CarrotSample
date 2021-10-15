@@ -13,7 +13,7 @@ protocol DiskCacheServiceProtocol {
     func fetch(key: String) -> UIImage?
 }
 
-class DiskCacheService {
+class DiskCacheService: DiskCacheServiceProtocol {
     
     private let fileManager: FileManager
     

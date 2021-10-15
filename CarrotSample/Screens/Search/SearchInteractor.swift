@@ -9,8 +9,11 @@ import UIKit
 import Alamofire
 
 protocol SearchInteractorInput {
-    func searchBooksWith(keyword: String, isScrolled: Bool)
+    func searchBooksWith(keyword: String,
+                         isScrolled: Bool)
     func numberOfBooks() -> Int
+    func configureTableCell(cell: BookTableCell,
+                            index: Int)
 }
 
 protocol SearchInteractorOutput: AnyObject {
@@ -31,6 +34,7 @@ class SearchInteractor {
     
     private var currPage = 1
     var currSearchRequest: DataRequest?
+    var currDownlowdRequest: DataRequest?
     var books: [BookModel]?
 }
 
@@ -60,5 +64,66 @@ extension SearchInteractor: SearchInteractorInput {
     
     func numberOfBooks() -> Int {
         return books?.count ?? 0
+    }
+    
+    func configureTableCell(cell: BookTableCell,
+                            index: Int) {
+        guard let book = books?[index] else { return }
+        
+        cell.titleLabel.text = book.title
+        cell.subTitleLabel.text = book.subtitle
+        
+        cell.bookImgView.image = nil
+        if let imgUrl = book.image {
+            fetchImage(imgUrl: imgUrl) { image in
+                cell.bookImgView.image = image
+            }
+        } else {
+            cell.bookImgView.image = defaultImage()
+        }
+        
+    }
+    
+    func defaultImage() -> UIImage {
+        return UIImage(named: "")!
+    }
+    
+    func fetchImage(imgUrl: String,
+                    completion: @escaping (UIImage)->Void) {
+        currDownlowdRequest?.cancel()
+        currDownlowdRequest = dependency
+            .bookService
+            .downloadImage(url: imgUrl) { [weak self] result in
+                guard let `self` = self else { return }
+                var image: UIImage
+                switch result {
+                case .noModified:
+                    if let memoryImg = self.dependency
+                        .memoryCacheService
+                        .fetch(key: imgUrl) {
+                        image = memoryImg
+                        completion(image)
+                    } else if let diskImg = self.dependency
+                                .diskCacheService
+                                .fetch(key: imgUrl) {
+                        image = diskImg
+                        completion(image)
+                    } else {
+                        completion(self.defaultImage())
+                    }
+                case .success(let image, let etag):
+                    self.dependency
+                        .memoryCacheService
+                        .store(key: imgUrl,
+                               image: image)
+                    self.dependency
+                        .diskCacheService
+                        .store(key: imgUrl,
+                               image: image)
+                    UserDefaults.standard.set(etag, forKey: imgUrl)
+                case .failure:
+                    break
+                }
+            }
     }
 }

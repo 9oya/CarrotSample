@@ -25,6 +25,10 @@ extension SearchPresenter: SearchViewOutput {
     func numberOfBooks() -> Int {
         return interactor.numberOfBooks()
     }
+    
+    func configureTableCell(cell: BookTableCell, index: Int) {
+        interactor.configureTableCell(cell: cell, index: index)
+    }
 }
 
 extension SearchPresenter: SearchInteractorOutput {

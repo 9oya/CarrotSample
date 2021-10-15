@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 protocol SearchViewInput {
     func setupInitialState()
@@ -15,8 +16,11 @@ protocol SearchViewInput {
 
 protocol SearchViewOutput {
     func viewIsReady()
-    func searchBooksWith(keyword: String, isScrolled: Bool)
+    func searchBooksWith(keyword: String,
+                         isScrolled: Bool)
     func numberOfBooks() -> Int
+    func configureTableCell(cell: BookTableCell,
+                            index: Int)
 }
 
 class SearchScreenConfigurator {
@@ -31,6 +35,12 @@ class SearchScreenConfigurator {
         let presenter = SearchPresenter()
         presenter.view = viewController
         let interactor = SearchInteractor()
+        
+        interactor.dependency = SearchInteractor.Dependency(
+            bookService: BookService(session: Session.default),
+            memoryCacheService: MemoryCacheService(imageCache: NSCache<NSString, UIImage>()),
+            diskCacheService: DiskCacheService(fileManager: FileManager.default))
+        
         interactor.output = presenter
         presenter.interactor = interactor
         viewController.output = presenter
@@ -40,14 +50,12 @@ class SearchScreenConfigurator {
 class SearchViewController: UIViewController {
     
     var output: SearchViewOutput!
-    let configurator = SearchScreenConfigurator()
     
     var tv: UITableView!
     var searchBar: UISearchBar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        configurator.configureModuleForViewInput(viewInput: self)
         output.viewIsReady()
     }
 }
@@ -56,11 +64,14 @@ extension SearchViewController: SearchViewInput {
     
     func setupInitialState() {
         
+        view.backgroundColor = .orange
+        
         searchBar = {
             let searchBar = UISearchBar()
             searchBar.translatesAutoresizingMaskIntoConstraints = false
             return searchBar
         }()
+        searchBar.delegate = self
         tv = {
             let tableView = UITableView()
             tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -73,6 +84,17 @@ extension SearchViewController: SearchViewInput {
         view.addSubview(searchBar)
         view.addSubview(tv)
         
+        let constraints = [
+            searchBar.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            searchBar.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            searchBar.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            
+            tv.topAnchor.constraint(equalTo: searchBar.bottomAnchor),
+            tv.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            tv.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            tv.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+        ]
+        NSLayoutConstraint.activate(constraints)
     }
     
     func tableViewNeedUpdate() {
@@ -95,6 +117,8 @@ extension SearchViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: BookTableCell.reuseIdentifier) as? BookTableCell else {
             fatalError()
         }
+        output.configureTableCell(cell: cell,
+                                  index: indexPath.row)
         return cell
     }
 }
@@ -103,5 +127,14 @@ extension SearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // TODO: Route to DetailScreen...
         print(indexPath)
+    }
+}
+
+extension SearchViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        if let keyword = searchBar.text {
+            output.searchBooksWith(keyword: keyword,
+                                   isScrolled: false)
+        }
     }
 }
