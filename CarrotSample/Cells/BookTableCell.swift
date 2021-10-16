@@ -10,6 +10,7 @@ import UIKit
 class BookTableCell: UITableViewCell {
     
     static let reuseIdentifier = "BookTableCell"
+    var cellHeight: CGFloat!
     
     var bookImgView: UIImageView!
     var titleLabel: UILabel!
@@ -49,15 +50,19 @@ class BookTableCell: UITableViewCell {
         let constraints = [
             bookImgView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             bookImgView.centerYAnchor.constraint(equalTo: centerYAnchor),
-            bookImgView.widthAnchor.constraint(equalToConstant: 50),
-            bookImgView.heightAnchor.constraint(equalToConstant: 50),
+            bookImgView.heightAnchor.constraint(equalTo: heightAnchor),
+            bookImgView.widthAnchor.constraint(equalTo: bookImgView.heightAnchor),
             
             titleLabel.topAnchor.constraint(equalTo: bookImgView.topAnchor),
             titleLabel.leftAnchor.constraint(equalTo: bookImgView.rightAnchor, constant: 15),
+            titleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
             
             subTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 10),
-            subTitleLabel.leftAnchor.constraint(equalTo: bookImgView.rightAnchor, constant: 15)
+            subTitleLabel.leftAnchor.constraint(equalTo: bookImgView.rightAnchor, constant: 15),
+            subTitleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -15)
         ]
         NSLayoutConstraint.activate(constraints)
+        
+        cellHeight = 70
     }
 }

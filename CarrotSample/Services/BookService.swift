@@ -13,9 +13,13 @@ protocol BookServiceProtocol {
                 completionHandler: @escaping (BookSearchResult) -> Void)
     -> DataRequest
     
+//    func downloadImage(url: String,
+//                       completionHandler: @escaping (DownloadResult) -> Void)
+//    -> DataRequest
+    
     func downloadImage(url: String,
                        completionHandler: @escaping (DownloadResult) -> Void)
-    -> DataRequest
+    -> DownloadRequest
 }
 
 enum DownloadResult {
@@ -26,9 +30,9 @@ enum DownloadResult {
 
 final class BookService: BookServiceProtocol {
     
-    private let session: SessionProtocol
+    private let session: Session
     
-    init(session: SessionProtocol) {
+    init(session: Session) {
         self.session = session
     }
     
@@ -49,27 +53,51 @@ final class BookService: BookServiceProtocol {
             }
     }
     
+//    func downloadImage(url: String,
+//                       completionHandler: @escaping (DownloadResult) -> Void)
+//    -> DataRequest {
+//        let etag = UserDefaults.standard.string(forKey: url)
+//        let request = APIRouter.downloadImage(url: url,
+//                                              etag: etag ?? "")
+//        return session
+//            .request(request, interceptor: nil)
+//            .responseData { response in
+//                if response.response?.statusCode == 304 {
+//                    completionHandler(.noModified)
+//                    return
+//                }
+//                let etag = response.response?.allHeaderFields["Etag"] as? String
+//                if let data = response.value,
+//                   let image = UIImage(data: data) {
+//                    completionHandler(.success(image: image,
+//                                               etag: etag!))
+//                    return
+//                }
+//                completionHandler(.failure)
+//            }
+//    }
+    
     func downloadImage(url: String,
                        completionHandler: @escaping (DownloadResult) -> Void)
-    -> DataRequest {
-        let etag = UserDefaults.standard.string(forKey: url)
-        let request = APIRouter.downloadImage(url: url,
-                                              etag: etag ?? "")
+    -> DownloadRequest {
+        let etag = UserDefaults.standard.string(forKey: url) ?? ""
+//        let request = AF.download(url)
+        let headers: HTTPHeaders = [
+            "If-None-Match": etag
+        ]
         return session
-            .request(request, interceptor: nil)
-            .responseData { response in
-                if response.response?.statusCode == 304 {
+            .download(url, method: .get, headers: headers)
+//            .download(url, method: .post)
+//            .request(URL(string: url)!, method: .get, headers: headers)
+            .responseData { rsp in
+                let rspEtag = rsp.response?.allHeaderFields["Etag"] as? String
+                if etag == rspEtag {
                     completionHandler(.noModified)
-                    return
+                } else if let data = rsp.value,
+                          let image = UIImage(data: data) {
+                    completionHandler(.success(image: image, etag: rspEtag ?? etag))
                 }
-                let etag = response.response?.allHeaderFields["Etag"] as? String
-                if let data = response.value,
-                   let image = UIImage(data: data) {
-                    completionHandler(.success(image: image,
-                                               etag: etag!))
-                    return
-                }
-                completionHandler(.failure)
+                return
             }
     }
 }

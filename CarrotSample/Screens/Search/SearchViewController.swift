@@ -128,6 +128,13 @@ extension SearchViewController: UITableViewDelegate {
         // TODO: Route to DetailScreen...
         print(indexPath)
     }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: BookTableCell.reuseIdentifier) as? BookTableCell else {
+            fatalError()
+        }
+        return cell.cellHeight
+    }
 }
 
 extension SearchViewController: UISearchBarDelegate {
@@ -135,6 +142,8 @@ extension SearchViewController: UISearchBarDelegate {
         if let keyword = searchBar.text {
             output.searchBooksWith(keyword: keyword,
                                    isScrolled: false)
+            searchBar.resignFirstResponder()
+            
         }
     }
 }

@@ -9,7 +9,7 @@ import Foundation
 import UIKit
 
 protocol DiskCacheServiceProtocol {
-    func store(key: String, image: UIImage)
+    func store(key: String, image: UIImage) -> Bool
     func fetch(key: String) -> UIImage?
 }
 
@@ -21,18 +21,18 @@ class DiskCacheService: DiskCacheServiceProtocol {
         self.fileManager = fileManager
     }
     
-    func store(key: String, image: UIImage) {
+    func store(key: String, image: UIImage) -> Bool {
         guard let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first else {
-            return
+            return false
         }
         var filePath = URL(fileURLWithPath: path)
         filePath.appendPathComponent(key)
         
         if !fileManager.fileExists(atPath: filePath.path) {
-            fileManager.createFile(atPath: filePath.path,
-                                   contents: image.jpegData(compressionQuality: 1.0), attributes: nil)
+            return fileManager.createFile(atPath: filePath.path,
+                                   contents: image.pngData(), attributes: nil)
         }
-        
+        return false
     }
     
     func fetch(key: String) -> UIImage? {
