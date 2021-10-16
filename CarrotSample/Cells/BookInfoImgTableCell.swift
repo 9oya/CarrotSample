@@ -33,8 +33,8 @@ class BookInfoImgTableCell: UITableViewCell {
         addSubview(bookImgView)
         
         let constraints = [
-            bookImgView.leftAnchor.constraint(equalTo: leftAnchor, constant: 20),
             bookImgView.centerYAnchor.constraint(equalTo: centerYAnchor),
+            bookImgView.centerXAnchor.constraint(equalTo: centerXAnchor),
             bookImgView.heightAnchor.constraint(equalTo: heightAnchor),
             bookImgView.widthAnchor.constraint(equalTo: bookImgView.heightAnchor)
         ]

@@ -15,6 +15,8 @@ protocol DetailInteractorInput {
                             index: Int)
     func configureTableCell(cell: BookInfoImgTableCell,
                             index: Int)
+    func configureTableCell(cell: BookInfoPdfTableCell,
+                            index: Int)
 }
 
 protocol DetailInteractorOutput {
@@ -44,7 +46,8 @@ extension DetailInteractor: DetailInteractorInput {
         currDetailRequest?.cancel()
         currDetailRequest = dependency
             .bookService
-            .detail(isbn: isbn) { [weak self] result in
+            .detail(isbn: "9781617294136") { [weak self] result in
+//            .detail(isbn: isbn) { [weak self] result in
                 guard let `self` = self else { return }
                 self.bookInfo = result
                 self.output.layoutViews()
@@ -59,12 +62,11 @@ extension DetailInteractor: DetailInteractorInput {
             return 0
         }
         var numberOfBookInfos = 14
-        if let pdfs = bookInfo.pdf,
-           let pdfDict = convertToDictionary(data: pdfs) {
+        if let pdfs = bookInfo.pdf {
             pdfDictArr = [[:]]
-            for _ in pdfDict {
+            for pdf in pdfs {
                 numberOfBookInfos += 1
-                pdfDictArr.append(pdfDict)
+                pdfDictArr.append([pdf.key:pdf.value])
             }
         }
         return numberOfBookInfos
@@ -119,7 +121,7 @@ extension DetailInteractor: DetailInteractorInput {
             descText = bookInfo.url!
         default:
             if !self.pdfDictArr.isEmpty,
-               let pdfDict = pdfDictArr.removeFirst().first {
+               let pdfDict = pdfDictArr[index-13].first {
                 titleText = pdfDict.key
                 descText = pdfDict.value
             }
@@ -129,11 +131,28 @@ extension DetailInteractor: DetailInteractorInput {
         cell.subTitleLabel.text = descText
     }
     
-    func configureTableCell(cell: BookInfoImgTableCell,
+    func configureTableCell(cell: BookInfoPdfTableCell,
                             index: Int) {
-        cell.imageView?.image = UIImage(named: "default-book")
+        if let pdfDict = pdfDictArr[index-13].first {
+            cell.loadPdfDocs(url: URL(string: pdfDict.value)!)
+        }
+        
     }
     
+    func configureTableCell(cell: BookInfoImgTableCell,
+                            index: Int) {
+        if let bookInfo = self.bookInfo,
+           let imgUrl = bookInfo.image {
+            fetchImage(imgUrl: imgUrl) { img in
+                cell.bookImgView?.image = img
+            }
+        } else {
+            cell.imageView?.image = defaultImage()
+        }
+    }
+}
+
+extension DetailInteractor {
     func convertToDictionary(data: Data) -> [String: String]? {
         do {
             return try JSONSerialization.jsonObject(with: data, options: []) as? [String: String]
@@ -141,5 +160,52 @@ extension DetailInteractor: DetailInteractorInput {
             print(error.localizedDescription)
         }
         return nil
+    }
+    
+    func defaultImage() -> UIImage {
+        return UIImage(named: "default-book")!
+    }
+    
+    func fetchImage(imgUrl: String,
+                    completion: @escaping (UIImage)->Void) {
+        currDownlowdRequest = dependency
+            .bookService
+            .downloadImage(url: imgUrl) { [weak self] result in
+                guard let `self` = self else { return }
+                var image: UIImage
+                switch result {
+                case .noModified:
+                    if let memoryImg = self.dependency
+                        .memoryCacheService
+                        .fetch(key: imgUrl) {
+                        image = memoryImg
+                        completion(image)
+                    } else if let diskImg = self.dependency
+                                .diskCacheService
+                                .fetch(key: URL(string: imgUrl)!.lastPathComponent) {
+                        image = diskImg
+                        self.dependency
+                            .memoryCacheService
+                            .store(key: imgUrl,
+                                   image: image)
+                        completion(image)
+                    } else {
+                        completion(self.defaultImage())
+                    }
+                case .success(let image, let etag):
+                    self.dependency
+                        .memoryCacheService
+                        .store(key: imgUrl,
+                               image: image)
+                    let _ = self.dependency
+                        .diskCacheService
+                        .store(key: URL(string: imgUrl)!.lastPathComponent,
+                               image: image)
+                    UserDefaults.standard.set(etag, forKey: imgUrl)
+                    completion(image)
+                case .failure:
+                    break
+                }
+            }
     }
 }

@@ -34,6 +34,10 @@ extension DetailPresenter: DetailViewOutput {
                             index: Int) {
         interactor.configureTableCell(cell: cell, index: index)
     }
+    
+    func configureTableCell(cell: BookInfoPdfTableCell, index: Int) {
+        interactor.configureTableCell(cell: cell, index: index)
+    }
 }
 
 extension DetailPresenter: DetailInteractorOutput {

@@ -22,6 +22,8 @@ protocol DetailViewOutput {
                             index: Int)
     func configureTableCell(cell: BookInfoImgTableCell,
                             index: Int)
+    func configureTableCell(cell: BookInfoPdfTableCell,
+                            index: Int)
 }
 
 class DetailScreenConfigurator {
@@ -81,6 +83,7 @@ class DetailViewController: UIViewController, DetailViewInput {
         tv.delegate = self
         tv.register(BookInfoTableCell.self, forCellReuseIdentifier: BookInfoTableCell.reuseIdentifier)
         tv.register(BookInfoImgTableCell.self, forCellReuseIdentifier: BookInfoImgTableCell.reuseIdentifier)
+        tv.register(BookInfoPdfTableCell.self, forCellReuseIdentifier: BookInfoPdfTableCell.reuseIdentifier)
         
         view.addSubview(tv)
         
@@ -116,6 +119,11 @@ extension DetailViewController: UITableViewDataSource {
             output.configureTableCell(cell: cell,
                                       index: indexPath.row)
             return cell
+        } else if indexPath.row >= 14,
+            let cell = tableView.dequeueReusableCell(withIdentifier: BookInfoPdfTableCell.reuseIdentifier) as? BookInfoPdfTableCell {
+            output.configureTableCell(cell: cell,
+                                      index: indexPath.row)
+            return cell
         } else if let cell = tableView.dequeueReusableCell(withIdentifier: BookInfoTableCell.reuseIdentifier) as? BookInfoTableCell {
             output.configureTableCell(cell: cell,
                                       index: indexPath.row)
@@ -127,13 +135,16 @@ extension DetailViewController: UITableViewDataSource {
 
 extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        print(indexPath)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         var height: CGFloat = 0
         if indexPath.row == 0,
            let cell = tableView.dequeueReusableCell(withIdentifier: BookInfoImgTableCell.reuseIdentifier) as? BookInfoImgTableCell {
+            height = cell.cellHeight
+        } else if indexPath.row >= 14,
+            let cell = tableView.dequeueReusableCell(withIdentifier: BookInfoPdfTableCell.reuseIdentifier) as? BookInfoPdfTableCell {
             height = cell.cellHeight
         } else if let cell = tableView.dequeueReusableCell(withIdentifier: BookInfoTableCell.reuseIdentifier) as? BookInfoTableCell {
             height = cell.cellHeight

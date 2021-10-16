@@ -65,8 +65,6 @@ final class BookService: BookServiceProtocol {
                    let result = try? decoder.decode(BookInfoModel.self, from: data) {
                     completionHandler(result)
                 }
-                let dict = self.convertToDictionary(data: response.value!)
-                print(dict!)
             }
     }
     
@@ -86,14 +84,5 @@ final class BookService: BookServiceProtocol {
                 }
                 completionHandler(.failure)
             }
-    }
-    
-    func convertToDictionary(data: Data) -> [String: String]? {
-        do {
-            return try JSONSerialization.jsonObject(with: data, options: []) as? [String: String]
-        } catch {
-            print(error.localizedDescription)
-        }
-        return nil
     }
 }

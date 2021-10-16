@@ -28,6 +28,6 @@ struct BookInfoModel: Codable {
     let image: String?
     let url: String?
     
-    let pdf: Data?
+    let pdf: [String:String]?
 }
 

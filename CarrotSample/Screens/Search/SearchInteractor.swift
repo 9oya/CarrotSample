@@ -99,7 +99,9 @@ extension SearchInteractor: SearchInteractorInput {
     func isbn(index: Int) -> String {
         return books![index].isbn13
     }
-    
+}
+
+extension SearchInteractor {
     func defaultImage() -> UIImage {
         return UIImage(named: "default-book")!
     }
