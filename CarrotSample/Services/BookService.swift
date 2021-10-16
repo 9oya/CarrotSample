@@ -81,14 +81,11 @@ final class BookService: BookServiceProtocol {
                        completionHandler: @escaping (DownloadResult) -> Void)
     -> DownloadRequest {
         let etag = UserDefaults.standard.string(forKey: url) ?? ""
-//        let request = AF.download(url)
-        let headers: HTTPHeaders = [
-            "If-None-Match": etag
-        ]
+//        let headers: HTTPHeaders = [
+//            "If-None-Match": etag
+//        ]
         return session
-            .download(url, method: .get, headers: headers)
-//            .download(url, method: .post)
-//            .request(URL(string: url)!, method: .get, headers: headers)
+            .download(url, method: .get)
             .responseData { rsp in
                 let rspEtag = rsp.response?.allHeaderFields["Etag"] as? String
                 if etag == rspEtag {
@@ -97,7 +94,7 @@ final class BookService: BookServiceProtocol {
                           let image = UIImage(data: data) {
                     completionHandler(.success(image: image, etag: rspEtag ?? etag))
                 }
-                return
+                completionHandler(.failure)
             }
     }
 }

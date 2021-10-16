@@ -54,6 +54,10 @@ class SearchViewController: UIViewController {
     var tv: UITableView!
     var searchBar: UISearchBar!
     
+    var lastContentOffset: CGFloat = 0.0
+    var isScrollToLoading: Bool = false
+    var keyword: String?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         output.viewIsReady()
@@ -99,12 +103,15 @@ extension SearchViewController: SearchViewInput {
     
     func tableViewNeedUpdate() {
         tv.reloadData()
+        isScrollToLoading = false
+        view.hideSpinner()
     }
     
     func scrollTableViewToTop() {
         tv.scrollToRow(at: IndexPath(row: 0, section: 0),
                        at: .top,
                        animated: false)
+        lastContentOffset = 0.0
     }
 }
 
@@ -135,11 +142,37 @@ extension SearchViewController: UITableViewDelegate {
         }
         return cell.cellHeight
     }
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        searchBar.resignFirstResponder()
+        
+        let offset = scrollView.contentOffset
+        
+        let contentSizeHeight = scrollView.contentSize.height
+        let edgeOfScrollToLoadMore = scrollView.frame.size.height + offset.y + 200
+        
+        if (contentSizeHeight != 0) && (contentSizeHeight < edgeOfScrollToLoadMore) {
+            if self.lastContentOffset > offset.y {
+                // ...Scrolled up
+            } else {
+                self.lastContentOffset = offset.y
+                if self.isScrollToLoading || self.keyword == nil {
+                    return
+                }
+                self.isScrollToLoading = true
+                self.output.searchBooksWith(keyword: self.keyword!,
+                                            isScrolled: true)
+                self.view.hideSpinner()
+                self.view.showSpinner()
+            }
+        }
+    }
 }
 
 extension SearchViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let keyword = searchBar.text {
+            self.keyword = keyword
             output.searchBooksWith(keyword: keyword,
                                    isScrolled: false)
             searchBar.resignFirstResponder()

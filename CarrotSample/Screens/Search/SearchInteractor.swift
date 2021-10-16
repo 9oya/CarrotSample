@@ -36,13 +36,15 @@ class SearchInteractor {
     var currSearchRequest: DataRequest?
     var currDownlowdRequest: DownloadRequest?
     var books: [BookModel]?
+    
+    var imgCacheDict: [String:UIImage] = [:]
 }
 
 extension SearchInteractor: SearchInteractorInput {
     
     func searchBooksWith(keyword: String, isScrolled: Bool) {
         currPage = !isScrolled ? 1 : currPage
-//        currSearchRequest?.cancel()
+        currSearchRequest?.cancel()
         currSearchRequest = dependency
             .bookService
             .search(keywork: keyword,
@@ -59,6 +61,9 @@ extension SearchInteractor: SearchInteractorInput {
                     self.books = result.books
                 }
                 self.output.tableViewNeedUpdate()
+                if !isScrolled && self.books?.count ?? 0 > 0 {
+                    self.output.scrollTableViewToTop()
+                }
             }
     }
     
@@ -73,10 +78,15 @@ extension SearchInteractor: SearchInteractorInput {
         cell.titleLabel.text = book.title
         cell.subTitleLabel.text = book.subtitle
         
-        cell.bookImgView.image = nil
+        if let cachedImg = self.imgCacheDict[book.isbn13] {
+            cell.bookImgView.image = cachedImg
+        } else {
+            cell.bookImgView.image = defaultImage()
+        }
         if let imgUrl = book.image {
             fetchImage(imgUrl: imgUrl) { image in
                 cell.bookImgView.image = image
+                self.imgCacheDict[book.isbn13] = image
             }
         } else {
             cell.bookImgView.image = defaultImage()
@@ -90,7 +100,6 @@ extension SearchInteractor: SearchInteractorInput {
     
     func fetchImage(imgUrl: String,
                     completion: @escaping (UIImage)->Void) {
-//        currDownlowdRequest?.cancel()
         currDownlowdRequest = dependency
             .bookService
             .downloadImage(url: imgUrl) { [weak self] result in
@@ -107,6 +116,10 @@ extension SearchInteractor: SearchInteractorInput {
                                 .diskCacheService
                                 .fetch(key: URL(string: imgUrl)!.lastPathComponent) {
                         image = diskImg
+                        self.dependency
+                            .memoryCacheService
+                            .store(key: imgUrl,
+                                   image: image)
                         completion(image)
                     } else {
                         completion(self.defaultImage())
@@ -116,7 +129,7 @@ extension SearchInteractor: SearchInteractorInput {
                         .memoryCacheService
                         .store(key: imgUrl,
                                image: image)
-                    let isStored = self.dependency
+                    let _ = self.dependency
                         .diskCacheService
                         .store(key: URL(string: imgUrl)!.lastPathComponent,
                                image: image)

@@ -33,11 +33,16 @@ class BookTableCell: UITableViewCell {
         }()
         titleLabel = {
             let label = UILabel()
+            label.font = .systemFont(ofSize: 16)
+            label.numberOfLines = 2
+            label.lineBreakMode = .byWordWrapping
             label.translatesAutoresizingMaskIntoConstraints = false
             return label
         }()
         subTitleLabel = {
             let label = UILabel()
+            label.font = .systemFont(ofSize: 12)
+            label.numberOfLines = 2
             label.lineBreakMode = .byTruncatingTail
             label.translatesAutoresizingMaskIntoConstraints = false
             return label
@@ -53,7 +58,7 @@ class BookTableCell: UITableViewCell {
             bookImgView.heightAnchor.constraint(equalTo: heightAnchor),
             bookImgView.widthAnchor.constraint(equalTo: bookImgView.heightAnchor),
             
-            titleLabel.topAnchor.constraint(equalTo: bookImgView.topAnchor),
+            titleLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             titleLabel.leftAnchor.constraint(equalTo: bookImgView.rightAnchor, constant: 15),
             titleLabel.rightAnchor.constraint(equalTo: rightAnchor, constant: -15),
             
@@ -63,6 +68,6 @@ class BookTableCell: UITableViewCell {
         ]
         NSLayoutConstraint.activate(constraints)
         
-        cellHeight = 70
+        cellHeight = 100
     }
 }
