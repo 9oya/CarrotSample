@@ -46,8 +46,7 @@ extension DetailInteractor: DetailInteractorInput {
         currDetailRequest?.cancel()
         currDetailRequest = dependency
             .bookService
-            .detail(isbn: "9781617294136") { [weak self] result in
-//            .detail(isbn: isbn) { [weak self] result in
+            .detail(isbn: isbn) { [weak self] result in
                 guard let `self` = self else { return }
                 self.bookInfo = result
                 self.output.layoutViews()

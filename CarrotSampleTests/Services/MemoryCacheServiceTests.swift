@@ -6,27 +6,45 @@
 //
 
 import XCTest
+@testable import CarrotSample
 
 class MemoryCacheServiceTests: XCTestCase {
+    
+    var cache: MockNSChache!
+    var service: MemoryCacheServiceProtocol!
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        cache = MockNSChache()
+        service = MemoryCacheService(imageCache: cache)
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        cache = nil
+        service = nil
     }
-
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    
+    func testStore_withKey() {
+        // given
+        let key = "9781617294136.png"
+        let image = UIImage(named: "default-book")!
+        
+        // when
+        service.store(key: key, image: image)
+        
+        // then
+        XCTAssertEqual(key as NSString, cache.key)
+        XCTAssertEqual(image, cache.object(forKey: key as NSString)! as UIImage)
     }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+    
+    func testFetch_withKey() {
+        // given
+        let key = "9781617294136.png"
+        
+        // when
+        let _ = service.fetch(key: key)
+        
+        // then
+        XCTAssertEqual(key as NSString, cache.key)
     }
 
 }

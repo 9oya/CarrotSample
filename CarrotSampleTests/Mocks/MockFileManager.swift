@@ -8,16 +8,23 @@
 import Foundation
 @testable import CarrotSample
 
-class MockFileManager: FileManagerProtocol {
+class MockFileManager: FileManager {
     
     var cachedDict: [String: Data] = [:]
+    var path: String = ""
+    var contents: Data?
+    var attributes: [FileAttributeKey : Any]?
     
-    func createFile(atPath path: String, contents data: Data?, attributes attr: [FileAttributeKey : Any]?) -> Bool {
-        cachedDict[path] = data
+    override func createFile(atPath path: String, contents data: Data?, attributes attr: [FileAttributeKey : Any]?) -> Bool {
+        self.path = path
+        self.contents = data
+        self.attributes = attr
+        self.cachedDict[path] = data
         return true
     }
     
-    func fileExists(atPath path: String) -> Bool {
+    override func fileExists(atPath path: String) -> Bool {
+        self.path = path
         if cachedDict[path] != nil {
             return true
         }

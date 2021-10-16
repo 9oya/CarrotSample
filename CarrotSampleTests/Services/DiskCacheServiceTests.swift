@@ -6,27 +6,53 @@
 //
 
 import XCTest
+@testable import CarrotSample
 
 class DiskCacheServiceTests: XCTestCase {
+    
+    var fileManager: MockFileManager!
+    var service: DiskCacheServiceProtocol!
 
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        fileManager = MockFileManager()
+        service = DiskCacheService(fileManager: fileManager)
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        fileManager = nil
+        service = nil
     }
 
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
+    func testStore_withKeyAndImage() {
+        // given
+        let key = "9781617294136.png"
+        let image = UIImage(named: "default-book")!
+        
+        // when
+        _ = service.store(key: key, image: image)
+        
+        // then
+        guard let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first else {
+            fatalError()
         }
+        var filePath = URL(fileURLWithPath: path)
+        filePath.appendPathComponent(key)
+        XCTAssertEqual(filePath.path, fileManager.path)
     }
-
+    
+    func testFetch_withKey() {
+        // given
+        let key = "9781617294136.png"
+        
+        // when
+        _ = service.fetch(key: key)
+        
+        // then
+        guard let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first else {
+            fatalError()
+        }
+        var filePath = URL(fileURLWithPath: path)
+        filePath.appendPathComponent(key)
+        XCTAssertEqual(filePath.path, fileManager.path)
+    }
 }

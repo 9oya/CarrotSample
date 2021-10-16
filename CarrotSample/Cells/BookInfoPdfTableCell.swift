@@ -64,7 +64,6 @@ class BookInfoPdfTableCell: UITableViewCell {
             pdfView.autoScales = true
             pdfView.displayMode = .singlePage
             pdfView.displayDirection = .horizontal
-            pdfView.usePageViewController(true, withViewOptions: [UIPageViewController.OptionsKey.interPageSpacing: 5])
             pdfView.translatesAutoresizingMaskIntoConstraints = false
             return pdfView
         }()
