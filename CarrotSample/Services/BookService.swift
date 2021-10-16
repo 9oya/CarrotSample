@@ -13,9 +13,9 @@ protocol BookServiceProtocol {
                 completionHandler: @escaping (BookSearchResult) -> Void)
     -> DataRequest
     
-//    func downloadImage(url: String,
-//                       completionHandler: @escaping (DownloadResult) -> Void)
-//    -> DataRequest
+    func detail(isbn: String,
+                completionHandler: @escaping (BookInfoModel) -> Void)
+    -> DataRequest
     
     func downloadImage(url: String,
                        completionHandler: @escaping (DownloadResult) -> Void)
@@ -53,37 +53,27 @@ final class BookService: BookServiceProtocol {
             }
     }
     
-//    func downloadImage(url: String,
-//                       completionHandler: @escaping (DownloadResult) -> Void)
-//    -> DataRequest {
-//        let etag = UserDefaults.standard.string(forKey: url)
-//        let request = APIRouter.downloadImage(url: url,
-//                                              etag: etag ?? "")
-//        return session
-//            .request(request, interceptor: nil)
-//            .responseData { response in
-//                if response.response?.statusCode == 304 {
-//                    completionHandler(.noModified)
-//                    return
-//                }
-//                let etag = response.response?.allHeaderFields["Etag"] as? String
-//                if let data = response.value,
-//                   let image = UIImage(data: data) {
-//                    completionHandler(.success(image: image,
-//                                               etag: etag!))
-//                    return
-//                }
-//                completionHandler(.failure)
-//            }
-//    }
+    func detail(isbn: String,
+                completionHandler: @escaping (BookInfoModel) -> Void)
+    -> DataRequest {
+        let request = APIRouter.bookDetail(isbn: isbn)
+        return session
+            .request(request)
+            .responseData { response in
+                let decoder = JSONDecoder()
+                if let data = response.value,
+                   let result = try? decoder.decode(BookInfoModel.self, from: data) {
+                    completionHandler(result)
+                }
+                let dict = self.convertToDictionary(data: response.value!)
+                print(dict!)
+            }
+    }
     
     func downloadImage(url: String,
                        completionHandler: @escaping (DownloadResult) -> Void)
     -> DownloadRequest {
         let etag = UserDefaults.standard.string(forKey: url) ?? ""
-//        let headers: HTTPHeaders = [
-//            "If-None-Match": etag
-//        ]
         return session
             .download(url, method: .get)
             .responseData { rsp in
@@ -96,5 +86,14 @@ final class BookService: BookServiceProtocol {
                 }
                 completionHandler(.failure)
             }
+    }
+    
+    func convertToDictionary(data: Data) -> [String: String]? {
+        do {
+            return try JSONSerialization.jsonObject(with: data, options: []) as? [String: String]
+        } catch {
+            print(error.localizedDescription)
+        }
+        return nil
     }
 }

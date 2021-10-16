@@ -14,6 +14,7 @@ protocol SearchInteractorInput {
     func numberOfBooks() -> Int
     func configureTableCell(cell: BookTableCell,
                             index: Int)
+    func isbn(index: Int) -> String
 }
 
 protocol SearchInteractorOutput: AnyObject {
@@ -93,6 +94,10 @@ extension SearchInteractor: SearchInteractorInput {
             cell.bookImgView.image = defaultImage()
         }
         
+    }
+    
+    func isbn(index: Int) -> String {
+        return books![index].isbn13
     }
     
     func defaultImage() -> UIImage {

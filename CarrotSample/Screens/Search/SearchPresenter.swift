@@ -23,11 +23,15 @@ extension SearchPresenter: SearchViewOutput {
     }
     
     func numberOfBooks() -> Int {
-        return interactor.numberOfBooks()
+        interactor.numberOfBooks()
     }
     
     func configureTableCell(cell: BookTableCell, index: Int) {
         interactor.configureTableCell(cell: cell, index: index)
+    }
+    
+    func isbn(index: Int) -> String {
+        interactor.isbn(index: index)
     }
 }
 

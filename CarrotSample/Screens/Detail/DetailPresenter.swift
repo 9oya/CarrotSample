@@ -21,10 +21,27 @@ extension DetailPresenter: DetailViewOutput {
     func loadBookInfo(isbn: String) {
         interactor.loadBookInfo(isbn: isbn)
     }
+    
+    func numberOfBookInfos() -> Int {
+        interactor.numberOfBookInfos()
+    }
+    
+    func configureTableCell(cell: BookInfoTableCell, index: Int) {
+        interactor.configureTableCell(cell: cell, index: index)
+    }
+    
+    func configureTableCell(cell: BookInfoImgTableCell,
+                            index: Int) {
+        interactor.configureTableCell(cell: cell, index: index)
+    }
 }
 
 extension DetailPresenter: DetailInteractorOutput {
     func layoutViews() {
         view.layoutViews()
+    }
+    
+    func scrollTableViewToTop() {
+        view.scrollTableViewToTop()
     }
 }

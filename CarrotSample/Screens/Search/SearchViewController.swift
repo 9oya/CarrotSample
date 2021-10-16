@@ -21,6 +21,7 @@ protocol SearchViewOutput {
     func numberOfBooks() -> Int
     func configureTableCell(cell: BookTableCell,
                             index: Int)
+    func isbn(index: Int) -> String
 }
 
 class SearchScreenConfigurator {
@@ -130,17 +131,16 @@ extension SearchViewController: UITableViewDataSource {
 
 extension SearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // TODO: Route to DetailScreen...
-        print(indexPath)
-        
         let vc = DetailViewController()
         let configurator = DetailScreenConfigurator()
         let interactorDependency = DetailInteractor.Dependency(
             bookService: BookService(session: Session.default),
             memoryCacheService: MemoryCacheService(imageCache: NSCache<NSString, UIImage>()),
             diskCacheService: DiskCacheService(fileManager: FileManager.default))
-        configurator.configureModuleForViewInput(viewInput: vc,
-                                                 interactorDependency: interactorDependency)
+        configurator.configureModuleForViewInput(
+            viewInput: vc,
+            interactorDependency: interactorDependency,
+            bookIsbn: output.isbn(index: indexPath.row))
         navigationController?.pushViewController(vc, animated: true)
     }
     
