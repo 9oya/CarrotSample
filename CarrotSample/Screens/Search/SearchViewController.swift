@@ -25,22 +25,20 @@ protocol SearchViewOutput {
 
 class SearchScreenConfigurator {
     
-    func configureModuleForViewInput<UIViewController>(viewInput: UIViewController) {
+    func configureModuleForViewInput<UIViewController>(viewInput: UIViewController,
+                                                       interactorDependency: SearchInteractor.Dependency) {
         if let viewController = viewInput as? SearchViewController {
-            configure(viewController: viewController)
+            configure(viewController: viewController,
+                      dependency: interactorDependency)
         }
     }
     
-    private func configure(viewController: SearchViewController) {
+    private func configure(viewController: SearchViewController,
+                           dependency: SearchInteractor.Dependency) {
         let presenter = SearchPresenter()
         presenter.view = viewController
         let interactor = SearchInteractor()
-        
-        interactor.dependency = SearchInteractor.Dependency(
-            bookService: BookService(session: Session.default),
-            memoryCacheService: MemoryCacheService(imageCache: NSCache<NSString, UIImage>()),
-            diskCacheService: DiskCacheService(fileManager: FileManager.default))
-        
+        interactor.dependency = dependency
         interactor.output = presenter
         presenter.interactor = interactor
         viewController.output = presenter
@@ -134,6 +132,16 @@ extension SearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // TODO: Route to DetailScreen...
         print(indexPath)
+        
+        let vc = DetailViewController()
+        let configurator = DetailScreenConfigurator()
+        let interactorDependency = DetailInteractor.Dependency(
+            bookService: BookService(session: Session.default),
+            memoryCacheService: MemoryCacheService(imageCache: NSCache<NSString, UIImage>()),
+            diskCacheService: DiskCacheService(fileManager: FileManager.default))
+        configurator.configureModuleForViewInput(viewInput: vc,
+                                                 interactorDependency: interactorDependency)
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

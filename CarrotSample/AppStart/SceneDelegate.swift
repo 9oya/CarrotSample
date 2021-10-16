@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -17,7 +18,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         let vc = SearchViewController()
         let configurator = SearchScreenConfigurator()
-        configurator.configureModuleForViewInput(viewInput: vc)
+        
+        let interactorDependency = SearchInteractor.Dependency(
+            bookService: BookService(session: Session.default),
+            memoryCacheService: MemoryCacheService(imageCache: NSCache<NSString, UIImage>()),
+            diskCacheService: DiskCacheService(fileManager: FileManager.default))
+        configurator.configureModuleForViewInput(viewInput: vc,
+                                                 interactorDependency: interactorDependency)
         window?.rootViewController = UINavigationController(rootViewController: vc)
         window?.makeKeyAndVisible()
     }

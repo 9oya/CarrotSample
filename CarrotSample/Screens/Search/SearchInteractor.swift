@@ -35,7 +35,7 @@ class SearchInteractor {
     private var currPage = 1
     var currSearchRequest: DataRequest?
     var currDownlowdRequest: DownloadRequest?
-    var books: [BookModel]?
+    var books: [BookSearchModel]?
     
     var imgCacheDict: [String:UIImage] = [:]
 }
@@ -59,6 +59,7 @@ extension SearchInteractor: SearchInteractorInput {
                     }
                 } else {
                     self.books = result.books
+                    self.imgCacheDict = [:]
                 }
                 self.output.tableViewNeedUpdate()
                 if !isScrolled && self.books?.count ?? 0 > 0 {
