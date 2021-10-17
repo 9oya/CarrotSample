@@ -30,10 +30,10 @@ class DetailInteractor {
     var provider: ServiceProvider!
     var imgFetchService: ImageFetchServiceProtocol!
     
-    var currDetailRequest: DataRequest?
-    var currDownlowdRequest: DownloadRequest?
-    var bookInfo: BookInfoModel?
-    var pdfDictArr: [[String: String]] = [[:]]
+    private var currDetailRequest: DataRequest?
+    private var currDownlowdRequest: DownloadRequest?
+    private var bookInfo: BookInfoModel?
+    private var pdfDictArr: [[String: String]] = [[:]]
 }
 
 extension DetailInteractor: DetailInteractorInput {

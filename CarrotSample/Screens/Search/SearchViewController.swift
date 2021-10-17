@@ -165,7 +165,6 @@ extension SearchViewController: UITableViewDelegate {
         searchBar.resignFirstResponder()
         
         let offset = scrollView.contentOffset
-        
         let contentSizeHeight = scrollView.contentSize.height
         let edgeOfScrollToLoadMore = scrollView.frame.size.height + offset.y + 200
         

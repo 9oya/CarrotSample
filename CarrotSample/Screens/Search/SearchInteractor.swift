@@ -29,11 +29,10 @@ class SearchInteractor {
     var imgFetchService: ImageFetchServiceProtocol!
     
     private var currPage = 1
-    var currSearchRequest: DataRequest?
-    var currDownlowdRequest: DownloadRequest?
-    var books: [BookSearchModel]?
-    
-    var imgCacheDict: [String:UIImage] = [:]
+    private var currSearchRequest: DataRequest?
+    private var currDownlowdRequest: DownloadRequest?
+    private var books: [BookSearchModel]?
+    private var imgCacheDict: [String:UIImage] = [:]
 }
 
 extension SearchInteractor: SearchInteractorInput {
