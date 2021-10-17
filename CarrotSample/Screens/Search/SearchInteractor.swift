@@ -107,31 +107,32 @@ extension SearchInteractor {
     
     func fetchImage(imgUrl: String,
                     completion: @escaping (UIImage)->Void) {
+        var image: UIImage
+        if let memoryImg = self.dependency
+            .memoryCacheService
+            .fetch(key: imgUrl) {
+            image = memoryImg
+            completion(image)
+            return
+        } else if let diskImg = self.dependency
+                    .diskCacheService
+                    .fetch(key: URL(string: imgUrl)!.lastPathComponent) {
+            image = diskImg
+            self.dependency
+                .memoryCacheService
+                .store(key: imgUrl,
+                       image: image)
+            completion(image)
+            return
+        }
         currDownlowdRequest = dependency
             .bookService
             .downloadImage(url: imgUrl) { [weak self] result in
                 guard let `self` = self else { return }
-                var image: UIImage
                 switch result {
-                case .noModified:
-                    if let memoryImg = self.dependency
-                        .memoryCacheService
-                        .fetch(key: imgUrl) {
-                        image = memoryImg
-                        completion(image)
-                    } else if let diskImg = self.dependency
-                                .diskCacheService
-                                .fetch(key: URL(string: imgUrl)!.lastPathComponent) {
-                        image = diskImg
-                        self.dependency
-                            .memoryCacheService
-                            .store(key: imgUrl,
-                                   image: image)
-                        completion(image)
-                    } else {
-                        completion(self.defaultImage())
-                    }
-                case .success(let image, let etag):
+                case .noModified(let image):
+                    completion(image)
+                case let .success(image, etag):
                     self.dependency
                         .memoryCacheService
                         .store(key: imgUrl,
