@@ -16,10 +16,7 @@ struct AppDependency {
 
 extension AppDependency {
     static func resolve() -> AppDependency {
-        let _provider = ServiceProvider(
-            bookService: BookService(session: Session.default),
-            memoryCacheService: MemoryCacheService(imageCache: NSCache<NSString, UIImage>()),
-            diskCacheService: DiskCacheService(fileManager: FileManager.default))
+        let _provider = ServiceProvider.resolve()
         
         return AppDependency(
             provider: _provider,

@@ -50,11 +50,14 @@ class DetailScreenConfigurator {
     ) {
         let presenter = DetailPresenter()
         presenter.view = viewController
+        
         let interactor = DetailInteractor()
         interactor.provider = provider
         interactor.output = presenter
         interactor.imgFetchService = imgFetchService
+        
         presenter.interactor = interactor
+        
         viewController.output = presenter
         viewController.isbn = bookIsbn
     }

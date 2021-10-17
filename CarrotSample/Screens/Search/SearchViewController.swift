@@ -22,6 +22,8 @@ protocol SearchViewOutput {
     func configureTableCell(cell: BookTableCell,
                             index: Int)
     func isbn(index: Int) -> String
+    func pushToDetailScreen(from view: SearchViewController,
+                            isbn: String)
 }
 
 class SearchScreenConfigurator {
@@ -45,11 +47,19 @@ class SearchScreenConfigurator {
     ) {
         let presenter = SearchPresenter()
         presenter.view = viewController
+        
         let interactor = SearchInteractor()
         interactor.provider = provider
         interactor.output = presenter
         interactor.imgFetchService = imgFetchService
+        
+        let router = SearchRouter()
+        router.provider = interactor.provider
+        router.imgFetchService = interactor.imgFetchService
+        
         presenter.interactor = interactor
+        presenter.router = router
+        
         viewController.output = presenter
     }
 }
@@ -139,19 +149,8 @@ extension SearchViewController: UITableViewDataSource {
 
 extension SearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let vc = DetailViewController()
-        let configurator = DetailScreenConfigurator()
-        let provider = ServiceProvider(
-            bookService: BookService(session: Session.default),
-            memoryCacheService: MemoryCacheService(imageCache: NSCache<NSString, UIImage>()),
-            diskCacheService: DiskCacheService(fileManager: FileManager.default))
-        let imgFetchService = ImageFetchService(provider: provider)
-        configurator.configureModuleForViewInput(
-            viewInput: vc,
-            provider: provider,
-            imgFetchService: imgFetchService,
-            bookIsbn: output.isbn(index: indexPath.row))
-        navigationController?.pushViewController(vc, animated: true)
+        output.pushToDetailScreen(from: self,
+                                  isbn: output.isbn(index: indexPath.row))
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		917A42FE11B553854A796264 /* Pods_CarrotSampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 381079151EC7EB920193422A /* Pods_CarrotSampleTests.framework */; };
 		BF05DD61271BC1060004DA67 /* ImageFetchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF05DD60271BC1060004DA67 /* ImageFetchService.swift */; };
+		BF05DD63271BD1150004DA67 /* ServiceProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF05DD62271BD1150004DA67 /* ServiceProvider.swift */; };
+		BF05DD65271BD8520004DA67 /* SearchRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF05DD64271BD8520004DA67 /* SearchRouter.swift */; };
 		BF42E1B2271AB93C004F95E5 /* BookInfoPdfTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF42E1B1271AB93C004F95E5 /* BookInfoPdfTableCell.swift */; };
 		BF79400427165FDA00E99551 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF79400327165FDA00E99551 /* AppDelegate.swift */; };
 		BF79400627165FDA00E99551 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF79400527165FDA00E99551 /* SceneDelegate.swift */; };
@@ -61,6 +63,8 @@
 		A59AB58DE80EE3938B175796 /* Pods-CarrotSample-CarrotSampleUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CarrotSample-CarrotSampleUITests.debug.xcconfig"; path = "Target Support Files/Pods-CarrotSample-CarrotSampleUITests/Pods-CarrotSample-CarrotSampleUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		B81DADBDDE79E80684655FBE /* Pods_CarrotSample_CarrotSampleUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CarrotSample_CarrotSampleUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF05DD60271BC1060004DA67 /* ImageFetchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageFetchService.swift; sourceTree = "<group>"; };
+		BF05DD62271BD1150004DA67 /* ServiceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceProvider.swift; sourceTree = "<group>"; };
+		BF05DD64271BD8520004DA67 /* SearchRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchRouter.swift; sourceTree = "<group>"; };
 		BF42E1B1271AB93C004F95E5 /* BookInfoPdfTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookInfoPdfTableCell.swift; sourceTree = "<group>"; };
 		BF79400027165FDA00E99551 /* CarrotSample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CarrotSample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF79400327165FDA00E99551 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -220,6 +224,7 @@
 				BFD95B9A2718E1CA0058BE79 /* MemoryCacheService.swift */,
 				BFD95BA32718EB110058BE79 /* DiskCacheService.swift */,
 				BF05DD60271BC1060004DA67 /* ImageFetchService.swift */,
+				BF05DD62271BD1150004DA67 /* ServiceProvider.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -238,6 +243,7 @@
 			children = (
 				BF79403D2716647E00E99551 /* SearchViewController.swift */,
 				BF79403F2716648600E99551 /* SearchInteractor.swift */,
+				BF05DD64271BD8520004DA67 /* SearchRouter.swift */,
 				BFA789172719A60100AD370D /* SearchPresenter.swift */,
 			);
 			path = Search;
@@ -491,6 +497,7 @@
 				BFD95B9B2718E1CA0058BE79 /* MemoryCacheService.swift in Sources */,
 				BF79400427165FDA00E99551 /* AppDelegate.swift in Sources */,
 				BF7940422716648E00E99551 /* DetailViewController.swift in Sources */,
+				BF05DD65271BD8520004DA67 /* SearchRouter.swift in Sources */,
 				BF79403E2716647E00E99551 /* SearchViewController.swift in Sources */,
 				BF794046271664C200E99551 /* AppDependency.swift in Sources */,
 				BF79400627165FDA00E99551 /* SceneDelegate.swift in Sources */,
@@ -498,6 +505,7 @@
 				BF42E1B2271AB93C004F95E5 /* BookInfoPdfTableCell.swift in Sources */,
 				BFD95B9927184E420058BE79 /* BookService.swift in Sources */,
 				BFA7892D271A8D8E00AD370D /* BookInfoModel.swift in Sources */,
+				BF05DD63271BD1150004DA67 /* ServiceProvider.swift in Sources */,
 				BFA7892B271A895000AD370D /* DetailPresenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

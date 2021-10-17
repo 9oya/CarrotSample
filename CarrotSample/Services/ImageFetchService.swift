@@ -13,12 +13,6 @@ protocol ImageFetchServiceProtocol {
     func defaultImage() -> UIImage
 }
 
-struct ServiceProvider {
-    let bookService: BookServiceProtocol!
-    let memoryCacheService: MemoryCacheServiceProtocol!
-    let diskCacheService: DiskCacheServiceProtocol!
-}
-
 class ImageFetchService: ImageFetchServiceProtocol {
     
     var provider: ServiceProvider

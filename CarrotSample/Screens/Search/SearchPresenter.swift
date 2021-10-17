@@ -10,6 +10,7 @@ import UIKit
 class SearchPresenter {
     var view: SearchViewInput!
     var interactor: SearchInteractorInput!
+    var router: SearchRouterInput!
 }
 
 extension SearchPresenter: SearchViewOutput {
@@ -32,6 +33,12 @@ extension SearchPresenter: SearchViewOutput {
     
     func isbn(index: Int) -> String {
         interactor.isbn(index: index)
+    }
+    
+    func pushToDetailScreen(from view: SearchViewController,
+                            isbn: String) {
+        router.pushToDetailScreen(from: view,
+                                  isbn: isbn)
     }
 }
 
