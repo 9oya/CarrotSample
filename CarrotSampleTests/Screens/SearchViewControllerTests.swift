@@ -11,9 +11,10 @@ import XCTest
 class SearchViewControllerTests: XCTestCase {
     
     var viewInput: MockSearchViewInput!
-    var viewOutput: MockSearchViewOuput!
+    var viewOutput: MockPresenter!
     var interactorOutput: MockSearchInteractorOutput!
     var interactorInput: MockSearchInteractor!
+    var router: MockRouter!
     
     var viewController: SearchViewController!
 
@@ -21,8 +22,10 @@ class SearchViewControllerTests: XCTestCase {
         interactorOutput = MockSearchInteractorOutput()
         interactorInput = MockSearchInteractor(output: interactorOutput)
         viewInput = MockSearchViewInput()
-        viewOutput = MockSearchViewOuput(view: viewInput,
-                                         interactor: interactorInput)
+        router = MockRouter()
+        viewOutput = MockPresenter(view: viewInput,
+                                   interactor: interactorInput,
+                                   router: router)
         viewController = SearchViewController()
         viewController.output = viewOutput
     }
@@ -95,17 +98,34 @@ class SearchViewControllerTests: XCTestCase {
         XCTAssertNotEqual(keyword, interactorInput.keyword)
         XCTAssertNotEqual(true, interactorInput.isScrolled)
     }
+    
+    func testTableViewDelegate_didSelectRowAt_router() {
+        let indexPath = IndexPath(row: 3, section: 0)
+        let isbn = "9781617294136"
+        interactorInput.isbn = isbn
+        
+        // when
+        viewController.setupInitialState()
+        viewController.tableView(viewController.tv, didSelectRowAt: indexPath)
+        
+        // then
+        XCTAssertEqual(isbn, router.isbn)
+        XCTAssertEqual(viewController, router.view)
+    }
 }
 
-class MockSearchViewOuput: SearchViewOutput {
+class MockPresenter: SearchViewOutput {
     
     var view: SearchViewInput
     var interactor: SearchInteractorInput
+    var router: SearchRouterInput
     
     init(view: SearchViewInput,
-         interactor: SearchInteractorInput) {
+         interactor: SearchInteractorInput,
+         router: SearchRouterInput) {
         self.view = view
         self.interactor = interactor
+        self.router = router
     }
     
     func viewIsReady() {
@@ -126,6 +146,10 @@ class MockSearchViewOuput: SearchViewOutput {
     
     func isbn(index: Int) -> String {
         interactor.isbn(index: index)
+    }
+    
+    func pushToDetailScreen(from view: SearchViewController, isbn: String) {
+        router.pushToDetailScreen(from: view, isbn: isbn)
     }
 }
 
@@ -161,7 +185,6 @@ class MockSearchInteractor: SearchInteractorInput {
     func searchBooksWith(keyword: String, isScrolled: Bool) {
         self.keyword = keyword
         self.isScrolled = isScrolled
-        self.isbn = "9781617294136"
     }
     
     func numberOfBooks() -> Int {
@@ -196,4 +219,15 @@ class MockSearchViewInput: SearchViewInput {
         isScrollTableViewToTop = true
     }
     
+}
+
+class MockRouter: SearchRouterInput {
+    
+    var view: SearchViewController?
+    var isbn: String?
+    
+    func pushToDetailScreen(from view: SearchViewController, isbn: String) {
+        self.view = view
+        self.isbn = isbn
+    }
 }
