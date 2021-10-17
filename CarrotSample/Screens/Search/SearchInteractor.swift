@@ -93,7 +93,6 @@ extension SearchInteractor: SearchInteractorInput {
         } else {
             cell.bookImgView.image = defaultImage()
         }
-        
     }
     
     func isbn(index: Int) -> String {
@@ -137,7 +136,7 @@ extension SearchInteractor {
                         .memoryCacheService
                         .store(key: imgUrl,
                                image: image)
-                    let _ = self.dependency
+                    _ = self.dependency
                         .diskCacheService
                         .store(key: URL(string: imgUrl)!.lastPathComponent,
                                image: image)

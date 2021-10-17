@@ -119,11 +119,7 @@ extension DetailInteractor: DetailInteractorInput {
             titleText = "url"
             descText = bookInfo.url!
         default:
-            if !self.pdfDictArr.isEmpty,
-               let pdfDict = pdfDictArr[index-13].first {
-                titleText = pdfDict.key
-                descText = pdfDict.value
-            }
+            break
         }
         
         cell.titleLabel.text = titleText
@@ -152,15 +148,7 @@ extension DetailInteractor: DetailInteractorInput {
 }
 
 extension DetailInteractor {
-    func convertToDictionary(data: Data) -> [String: String]? {
-        do {
-            return try JSONSerialization.jsonObject(with: data, options: []) as? [String: String]
-        } catch {
-            print(error.localizedDescription)
-        }
-        return nil
-    }
-    
+
     func defaultImage() -> UIImage {
         return UIImage(named: "default-book")!
     }
