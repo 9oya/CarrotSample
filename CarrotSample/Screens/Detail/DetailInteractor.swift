@@ -26,14 +26,9 @@ protocol DetailInteractorOutput {
 
 class DetailInteractor {
     
-    struct Dependency {
-        let bookService: BookServiceProtocol!
-        let memoryCacheService: MemoryCacheServiceProtocol!
-        let diskCacheService: DiskCacheServiceProtocol!
-    }
-    
     var output: DetailInteractorOutput!
-    var dependency: Dependency!
+    var provider: ServiceProvider!
+    var imgFetchService: ImageFetchServiceProtocol!
     
     var currDetailRequest: DataRequest?
     var currDownlowdRequest: DownloadRequest?
@@ -44,7 +39,7 @@ class DetailInteractor {
 extension DetailInteractor: DetailInteractorInput {
     func loadBookInfo(isbn: String) {
         currDetailRequest?.cancel()
-        currDetailRequest = dependency
+        currDetailRequest = provider
             .bookService
             .detail(isbn: isbn) { [weak self] result in
                 guard let `self` = self else { return }
@@ -138,61 +133,12 @@ extension DetailInteractor: DetailInteractorInput {
                             index: Int) {
         if let bookInfo = self.bookInfo,
            let imgUrl = bookInfo.image {
-            fetchImage(imgUrl: imgUrl) { img in
-                cell.bookImgView?.image = img
-            }
-        } else {
-            cell.imageView?.image = defaultImage()
-        }
-    }
-}
-
-extension DetailInteractor {
-    func defaultImage() -> UIImage {
-        return UIImage(named: "default-book")!
-    }
-    
-    func fetchImage(imgUrl: String,
-                    completion: @escaping (UIImage)->Void) {
-        var image: UIImage
-        if let memoryImg = self.dependency
-            .memoryCacheService
-            .fetch(key: imgUrl) {
-            image = memoryImg
-            completion(image)
-            return
-        } else if let diskImg = self.dependency
-                    .diskCacheService
-                    .fetch(key: URL(string: imgUrl)!.lastPathComponent) {
-            image = diskImg
-            self.dependency
-                .memoryCacheService
-                .store(key: imgUrl,
-                       image: image)
-            completion(image)
-            return
-        }
-        currDownlowdRequest = dependency
-            .bookService
-            .downloadImage(url: imgUrl) { [weak self] result in
-                guard let `self` = self else { return }
-                switch result {
-                case .noModified(let image):
-                    completion(image)
-                case let .success(image, etag):
-                    self.dependency
-                        .memoryCacheService
-                        .store(key: imgUrl,
-                               image: image)
-                    _ = self.dependency
-                        .diskCacheService
-                        .store(key: URL(string: imgUrl)!.lastPathComponent,
-                               image: image)
-                    UserDefaults.standard.set(etag, forKey: imgUrl)
-                    completion(image)
-                case .failure:
-                    break
+            imgFetchService
+                .fetchImage(imgUrl: imgUrl) { img in
+                    cell.bookImgView?.image = img
                 }
-            }
+        } else {
+            cell.imageView?.image = imgFetchService.defaultImage()
+        }
     }
 }

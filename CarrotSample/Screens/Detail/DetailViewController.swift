@@ -30,26 +30,30 @@ class DetailScreenConfigurator {
     
     func configureModuleForViewInput<UIViewController>(
         viewInput: UIViewController,
-        interactorDependency: DetailInteractor.Dependency,
+        provider: ServiceProvider,
+        imgFetchService: ImageFetchServiceProtocol,
         bookIsbn: String
     ) {
         if let viewController = viewInput as? DetailViewController {
             configure(viewController: viewController,
-                      dependency: interactorDependency,
+                      provider: provider,
+                      imgFetchService: imgFetchService,
                       bookIsbn: bookIsbn)
         }
     }
     
     private func configure(
         viewController: DetailViewController,
-        dependency: DetailInteractor.Dependency,
+        provider: ServiceProvider,
+        imgFetchService: ImageFetchServiceProtocol,
         bookIsbn: String
     ) {
         let presenter = DetailPresenter()
         presenter.view = viewController
         let interactor = DetailInteractor()
-        interactor.dependency = dependency
+        interactor.provider = provider
         interactor.output = presenter
+        interactor.imgFetchService = imgFetchService
         presenter.interactor = interactor
         viewController.output = presenter
         viewController.isbn = bookIsbn

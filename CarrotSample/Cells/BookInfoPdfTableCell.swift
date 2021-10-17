@@ -19,22 +19,22 @@ class BookInfoPdfTableCell: UITableViewCell {
     var swipeLeft: UISwipeGestureRecognizer!
     
     @objc func respondToSwipeGesture(gesture: UIGestureRecognizer) {
-            if let swipeGesture = gesture as? UISwipeGestureRecognizer {
-                switch swipeGesture.direction {
-                case .right:
-                    print("Swiped back")
-                    if pdfView.canGoToPreviousPage {
-                        pdfView.goToPreviousPage(nil)
-                    }
-                case .left:
-                    if pdfView.canGoToNextPage {
-                        pdfView.goToNextPage(nil)
-                    }
-                default:
-                    break
+        if let swipeGesture = gesture as? UISwipeGestureRecognizer {
+            switch swipeGesture.direction {
+            case .right:
+                print("Swiped back")
+                if pdfView.canGoToPreviousPage {
+                    pdfView.goToPreviousPage(nil)
                 }
+            case .left:
+                if pdfView.canGoToNextPage {
+                    pdfView.goToNextPage(nil)
+                }
+            default:
+                break
             }
         }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

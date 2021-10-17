@@ -19,12 +19,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let vc = SearchViewController()
         let configurator = SearchScreenConfigurator()
         
-        let interactorDependency = SearchInteractor.Dependency(
+        let provider = ServiceProvider(
             bookService: BookService(session: Session.default),
             memoryCacheService: MemoryCacheService(imageCache: NSCache<NSString, UIImage>()),
             diskCacheService: DiskCacheService(fileManager: FileManager.default))
+        let imgFetchService = ImageFetchService(provider: provider)
         configurator.configureModuleForViewInput(viewInput: vc,
-                                                 interactorDependency: interactorDependency)
+                                                 provider: provider,
+                                                 imgFetchService: imgFetchService)
         window?.rootViewController = UINavigationController(rootViewController: vc)
         window?.makeKeyAndVisible()
     }

@@ -26,21 +26,29 @@ protocol SearchViewOutput {
 
 class SearchScreenConfigurator {
     
-    func configureModuleForViewInput<UIViewController>(viewInput: UIViewController,
-                                                       interactorDependency: SearchInteractor.Dependency) {
+    func configureModuleForViewInput<UIViewController>(
+        viewInput: UIViewController,
+        provider: ServiceProvider,
+        imgFetchService: ImageFetchServiceProtocol
+    ) {
         if let viewController = viewInput as? SearchViewController {
             configure(viewController: viewController,
-                      dependency: interactorDependency)
+                      provider: provider,
+                      imgFetchService: imgFetchService)
         }
     }
     
-    private func configure(viewController: SearchViewController,
-                           dependency: SearchInteractor.Dependency) {
+    private func configure(
+        viewController: SearchViewController,
+        provider: ServiceProvider,
+        imgFetchService: ImageFetchServiceProtocol
+    ) {
         let presenter = SearchPresenter()
         presenter.view = viewController
         let interactor = SearchInteractor()
-        interactor.dependency = dependency
+        interactor.provider = provider
         interactor.output = presenter
+        interactor.imgFetchService = imgFetchService
         presenter.interactor = interactor
         viewController.output = presenter
     }
@@ -133,13 +141,15 @@ extension SearchViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let vc = DetailViewController()
         let configurator = DetailScreenConfigurator()
-        let interactorDependency = DetailInteractor.Dependency(
+        let provider = ServiceProvider(
             bookService: BookService(session: Session.default),
             memoryCacheService: MemoryCacheService(imageCache: NSCache<NSString, UIImage>()),
             diskCacheService: DiskCacheService(fileManager: FileManager.default))
+        let imgFetchService = ImageFetchService(provider: provider)
         configurator.configureModuleForViewInput(
             viewInput: vc,
-            interactorDependency: interactorDependency,
+            provider: provider,
+            imgFetchService: imgFetchService,
             bookIsbn: output.isbn(index: indexPath.row))
         navigationController?.pushViewController(vc, animated: true)
     }
