@@ -11,30 +11,30 @@ import XCTest
 class SearchViewControllerTests: XCTestCase {
     
     var viewInput: MockSearchViewInput!
-    var viewOutput: MockPresenter!
+    var presenter: MockPresenter!
     var interactorOutput: MockSearchInteractorOutput!
-    var interactorInput: MockSearchInteractor!
+    var interactor: MockSearchInteractor!
     var router: MockRouter!
     
     var viewController: SearchViewController!
 
     override func setUpWithError() throws {
         interactorOutput = MockSearchInteractorOutput()
-        interactorInput = MockSearchInteractor(output: interactorOutput)
+        interactor = MockSearchInteractor(output: interactorOutput)
         viewInput = MockSearchViewInput()
         router = MockRouter()
-        viewOutput = MockPresenter(view: viewInput,
-                                   interactor: interactorInput,
-                                   router: router)
+        presenter = MockPresenter(view: viewInput,
+                                  interactor: interactor,
+                                  router: router)
         viewController = SearchViewController()
-        viewController.output = viewOutput
+        viewController.output = presenter
     }
 
     override func tearDownWithError() throws {
         interactorOutput = nil
-        interactorInput = nil
+        interactor = nil
         viewInput = nil
-        viewOutput = nil
+        presenter = nil
         viewController = nil
     }
 
@@ -57,32 +57,32 @@ class SearchViewControllerTests: XCTestCase {
         searchBar.delegate?.searchBarSearchButtonClicked?(searchBar)
         
         // then
-        XCTAssertEqual(keyword, interactorInput.keyword)
+        XCTAssertEqual(keyword, interactor.keyword)
     }
     
     func testTableViewDataSource_numberOfRowsInSection() {
         // given
-        interactorInput.books = 14
+        interactor.books = 14
         
         // when
         viewController.setupInitialState()
         _ = viewController.tableView(viewController.tv, numberOfRowsInSection: 0)
         
         // then
-        XCTAssertEqual(14, interactorInput.books)
+        XCTAssertEqual(14, interactor.books)
     }
     
     func testTableViewDataSource_cellForRowAt() {
         // given
         let indexPath = IndexPath(row: 3, section: 0)
-        interactorInput.index = indexPath.row
+        interactor.index = indexPath.row
         
         // when
         viewController.setupInitialState()
         _ = viewController.tableView(viewController.tv, cellForRowAt: indexPath)
         
         // then
-        XCTAssertEqual(indexPath.row, interactorInput.index)
+        XCTAssertEqual(indexPath.row, interactor.index)
     }
     
     func testScrollViewDidScroll_not() {
@@ -95,14 +95,14 @@ class SearchViewControllerTests: XCTestCase {
         viewController.scrollViewDidScroll(viewController.tv)
         
         // then
-        XCTAssertNotEqual(keyword, interactorInput.keyword)
-        XCTAssertNotEqual(true, interactorInput.isScrolled)
+        XCTAssertNotEqual(keyword, interactor.keyword)
+        XCTAssertNotEqual(true, interactor.isScrolled)
     }
     
     func testTableViewDelegate_didSelectRowAt_router() {
         let indexPath = IndexPath(row: 3, section: 0)
         let isbn = "9781617294136"
-        interactorInput.isbn = isbn
+        interactor.isbn = isbn
         
         // when
         viewController.setupInitialState()

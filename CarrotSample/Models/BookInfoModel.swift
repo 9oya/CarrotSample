@@ -7,10 +7,6 @@
 
 import Foundation
 
-struct BookInfoResult: Codable {
-    
-}
-
 struct BookInfoModel: Codable {
     let error: String?
     let title: String
