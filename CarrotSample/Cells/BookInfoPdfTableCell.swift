@@ -46,9 +46,13 @@ class BookInfoPdfTableCell: UITableViewCell {
     }
     
     func loadPdfDocs(url: URL) {
-        let pdfDoc = PDFDocument(url: url)
-        pdfView.document = pdfDoc
-        pdfView.setNeedsLayout()
+        DispatchQueue.global(qos: .utility).async {
+            let pdfDoc = PDFDocument(url: url)
+            DispatchQueue.main.async { [weak self] in
+                guard let `self` = self else { return }
+                self.pdfView.document = pdfDoc
+            }
+        }
     }
     
     private func setupLayout() {
