@@ -14,6 +14,7 @@ class BookInfoPdfTableCell: UITableViewCell {
     var cellHeight: CGFloat!
     
     var pdfView: PDFView!
+    var label: UILabel!
     
     var swipeRight: UISwipeGestureRecognizer!
     var swipeLeft: UISwipeGestureRecognizer!
@@ -45,12 +46,18 @@ class BookInfoPdfTableCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func loadPdfDocs(url: URL) {
+    func loadPdfDocs(url: URL,
+                     completion: @escaping ()->Void,
+                     failed: @escaping ()->Void) {
         DispatchQueue.global(qos: .utility).async {
-            let pdfDoc = PDFDocument(url: url)
-            DispatchQueue.main.async { [weak self] in
-                guard let `self` = self else { return }
-                self.pdfView.document = pdfDoc
+            if let pdfDoc = PDFDocument(url: url) {
+                DispatchQueue.main.async { [weak self] in
+                    guard let `self` = self else { return }
+                    self.pdfView.document = pdfDoc
+                }
+                completion()
+            } else {
+                failed()
             }
         }
     }
@@ -71,14 +78,25 @@ class BookInfoPdfTableCell: UITableViewCell {
             pdfView.translatesAutoresizingMaskIntoConstraints = false
             return pdfView
         }()
+        label = {
+            let label = UILabel()
+            label.font = .systemFont(ofSize: 20, weight: .bold)
+            label.textColor = .systemGray2
+            label.translatesAutoresizingMaskIntoConstraints = false
+            return label
+        }()
         
         addSubview(pdfView)
+        addSubview(label)
         
         let constraints = [
             pdfView.topAnchor.constraint(equalTo: topAnchor),
             pdfView.leftAnchor.constraint(equalTo: leftAnchor),
             pdfView.rightAnchor.constraint(equalTo: rightAnchor),
-            pdfView.bottomAnchor.constraint(equalTo: bottomAnchor)
+            pdfView.bottomAnchor.constraint(equalTo: bottomAnchor),
+            
+            label.centerXAnchor.constraint(equalTo: centerXAnchor),
+            label.centerYAnchor.constraint(equalTo: centerYAnchor)
         ]
         NSLayoutConstraint.activate(constraints)
         

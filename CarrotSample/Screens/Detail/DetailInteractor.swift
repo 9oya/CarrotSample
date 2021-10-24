@@ -33,7 +33,7 @@ class DetailInteractor {
     private var currDetailRequest: DataRequest?
     private var currDownlowdRequest: DownloadRequest?
     private var bookInfo: BookInfoModel?
-    private var pdfDictArr: [[String: String]] = [[:]]
+    private var pdfDictArr: [Int: [String: String]] = [0:[:]]
 }
 
 extension DetailInteractor: DetailInteractorInput {
@@ -57,10 +57,12 @@ extension DetailInteractor: DetailInteractorInput {
         }
         var numberOfBookInfos = 14
         if let pdfs = bookInfo.pdf {
-            pdfDictArr = [[:]]
+            pdfDictArr = [0:[:]]
             for pdf in pdfs {
+                
+//                pdfDictArr.append([pdf.key:pdf.value])
+                pdfDictArr[numberOfBookInfos] = [pdf.key:pdf.value]
                 numberOfBookInfos += 1
-                pdfDictArr.append([pdf.key:pdf.value])
             }
         }
         return numberOfBookInfos
@@ -123,8 +125,18 @@ extension DetailInteractor: DetailInteractorInput {
     
     func configureTableCell(cell: BookInfoPdfTableCell,
                             index: Int) {
-        if let pdfDict = pdfDictArr[index-13].first {
-            cell.loadPdfDocs(url: URL(string: pdfDict.value)!)
+        if let pdfDict = pdfDictArr[index]?.first,
+           let url = URL(string: pdfDict.value) {
+            cell.loadPdfDocs(url: url) {
+                DispatchQueue.main.async {
+                    cell.label.text = ""
+                }
+            } failed: {
+                DispatchQueue.main.async {
+                    cell.label.text = "Fail to load pdf..."
+                }
+            }
+
         }
         
     }
