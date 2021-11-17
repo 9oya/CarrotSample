@@ -16,6 +16,8 @@ class BookInfoPdfTableCell: UITableViewCell {
     var pdfView: PDFView!
     var label: UILabel!
     
+    var activityIndicator: UIActivityIndicatorView!
+    
     var swipeRight: UISwipeGestureRecognizer!
     var swipeLeft: UISwipeGestureRecognizer!
     
@@ -23,7 +25,6 @@ class BookInfoPdfTableCell: UITableViewCell {
         if let swipeGesture = gesture as? UISwipeGestureRecognizer {
             switch swipeGesture.direction {
             case .right:
-                print("Swiped back")
                 if pdfView.canGoToPreviousPage {
                     pdfView.goToPreviousPage(nil)
                 }
@@ -46,18 +47,22 @@ class BookInfoPdfTableCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func loadPdfDocs(url: URL,
-                     completion: @escaping ()->Void,
-                     failed: @escaping ()->Void) {
+    func loadPdfDocs(url: URL) {
+        activityIndicator.startAnimating()
         DispatchQueue.global(qos: .utility).async {
             if let pdfDoc = PDFDocument(url: url) {
                 DispatchQueue.main.async { [weak self] in
                     guard let `self` = self else { return }
                     self.pdfView.document = pdfDoc
+                    self.activityIndicator.stopAnimating()
+                    self.label.text = ""
                 }
-                completion()
             } else {
-                failed()
+                DispatchQueue.main.async { [weak self] in
+                    guard let `self` = self else { return }
+                    self.activityIndicator.stopAnimating()
+                    self.label.text = "Fail to load pdf..."
+                }
             }
         }
     }
@@ -85,9 +90,16 @@ class BookInfoPdfTableCell: UITableViewCell {
             label.translatesAutoresizingMaskIntoConstraints = false
             return label
         }()
+        activityIndicator = {
+            let actIndicator = UIActivityIndicatorView()
+            actIndicator.style = .medium
+            actIndicator.translatesAutoresizingMaskIntoConstraints = false
+            return actIndicator
+        }()
         
         addSubview(pdfView)
         addSubview(label)
+        addSubview(activityIndicator)
         
         let constraints = [
             pdfView.topAnchor.constraint(equalTo: topAnchor),
@@ -96,7 +108,10 @@ class BookInfoPdfTableCell: UITableViewCell {
             pdfView.bottomAnchor.constraint(equalTo: bottomAnchor),
             
             label.centerXAnchor.constraint(equalTo: centerXAnchor),
-            label.centerYAnchor.constraint(equalTo: centerYAnchor)
+            label.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            activityIndicator.centerXAnchor.constraint(equalTo: centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: centerYAnchor)
         ]
         NSLayoutConstraint.activate(constraints)
         

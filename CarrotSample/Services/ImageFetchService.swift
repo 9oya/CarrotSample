@@ -43,7 +43,7 @@ class ImageFetchService: ImageFetchServiceProtocol {
             .downloadImage(url: imgUrl) { [weak self] result in
                 guard let `self` = self else { return }
                 switch result {
-                case .noModified(let image):
+                case .notModified(let image):
                     completion(image)
                 case let .success(image, etag):
                     self.provider

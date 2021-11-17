@@ -36,23 +36,18 @@ class DiskCacheService: DiskCacheServiceProtocol {
     }
     
     func fetch(key: String) -> UIImage? {
-        guard let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory, .userDomainMask, true).first else {
-            return nil
-        }
-        var filePath = URL(fileURLWithPath: path)
-        filePath.appendPathComponent(key)
-        
-        if fileManager.fileExists(atPath: filePath.path) {
-            guard let imageData = try? Data(contentsOf: filePath) else {
-                return nil
+        if let path = NSSearchPathForDirectoriesInDomains(.cachesDirectory,
+                                                          .userDomainMask,
+                                                          true).first {
+            var filePath = URL(fileURLWithPath: path)
+            filePath.appendPathComponent(key)
+            if fileManager.fileExists(atPath: filePath.path),
+               let imageData = try? Data(contentsOf: filePath),
+               let image = UIImage(data: imageData) {
+                return image
             }
-            guard let image = UIImage(data: imageData) else {
-                return nil
-            }
-            return image
-        } else {
-            return nil
         }
+        return nil
     }
     
 }

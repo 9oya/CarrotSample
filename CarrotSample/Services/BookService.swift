@@ -23,7 +23,7 @@ protocol BookServiceProtocol {
 }
 
 enum DownloadResult {
-    case noModified(image: UIImage)
+    case notModified(image: UIImage)
     case success(image: UIImage, etag: String)
     case failure
 }
@@ -79,7 +79,7 @@ final class BookService: BookServiceProtocol {
                 if etag == rspEtag,
                    let data = rsp.value,
                    let image = UIImage(data: data) {
-                    completionHandler(.noModified(image: image))
+                    completionHandler(.notModified(image: image))
                 } else if let data = rsp.value,
                           let image = UIImage(data: data) {
                     completionHandler(.success(image: image, etag: rspEtag ?? etag))
